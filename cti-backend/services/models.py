@@ -19,6 +19,7 @@ class Service (models.Model):
 
 class User(AbstractUser):
     # Your custom fields and methods here
+    phone=models.CharField(max_length=20)
 
     class Meta:
         db_table = 'custom_user'  # Use a unique db_table name for your custom User model
