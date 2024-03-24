@@ -1,4 +1,8 @@
 from django.db import models
+from django.db.models import  ManyToManyField
+
+from django.contrib.auth.models import Group  # Import both
+
 from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
@@ -20,6 +24,7 @@ class Service (models.Model):
 class User(AbstractUser):
     # Your custom fields and methods here
     phone=models.CharField(max_length=20)
+    groups = ManyToManyField(Group, related_name="service_users")
 
     class Meta:
         db_table = 'custom_user'  # Use a unique db_table name for your custom User model
