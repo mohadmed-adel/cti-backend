@@ -11,5 +11,5 @@ urlpatterns = [
         "services/<int:main_service_id>",
         views.MainServiceViewSet.as_view(),
     ),
-    path("login/", views.MyObtainTokenPairView.as_view(), name="token_obtain_pair"),
+     
 ]

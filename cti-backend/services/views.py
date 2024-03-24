@@ -2,10 +2,7 @@ from rest_framework import generics, permissions
 from .models import MainService, Service
 from .serializers import MainServiceSerializer, ServiceSerializer
 from rest_framework.response import Response
-
-from .serializers import MyTokenObtainPairSerializer
-from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.views import TokenObtainPairView
+ 
 
 
 class MainServiceViewSet(generics.ListAPIView):
@@ -22,6 +19,4 @@ class MainServiceViewSet(generics.ListAPIView):
             return super().get(request)
 
 
-class MyObtainTokenPairView(TokenObtainPairView):
-    permission_classes = (AllowAny,)
-    serializer_class = MyTokenObtainPairSerializer
+ 
