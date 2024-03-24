@@ -28,8 +28,6 @@ class User(AbstractUser):
         'auth.Group',
         related_name='custom_user_groups',
         blank=True,
-        
-        
     )
 
     # Override the user_permissions field to specify a unique related_name attribute
@@ -37,7 +35,6 @@ class User(AbstractUser):
         'auth.Permission',
         related_name='custom_user_permissions',
         blank=True,
-       
-    )
+     )
 
     
