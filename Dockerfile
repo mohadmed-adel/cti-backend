@@ -13,8 +13,8 @@ COPY cti-backend/requirements.txt /app/
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the current directory contents into the container at /app
-COPY cti-backend /app/
+# Copy the contents of the cti-backend directory into the container at /app
+COPY cti-backend/ /app/
 
 # Expose port 8000 to allow communication to/from the container
 EXPOSE 8000
