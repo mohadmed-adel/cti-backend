@@ -4,11 +4,11 @@ from . import views
 
 urlpatterns = [
     path(
-        "services",
+        "categories",
         views.MainServiceViewSet.as_view(),
     ),
     path(
-        "services/<int:main_service_id>",
+        "services/<int:main_cate_id>",
         views.MainServiceViewSet.as_view(),
     ),
      
