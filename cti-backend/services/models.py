@@ -1,51 +1,61 @@
+from string import hexdigits
 from django.db import models
-from django.db.models import  ManyToManyField
+from django.db.models import ManyToManyField
+from django.contrib.auth.models import User
+from django.utils import timezone
 
 from django.contrib.auth.models import Group  # Import both
 
 from django.contrib.auth.models import AbstractUser
 
+
 # Create your models here.
-class Category (models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=20)
-    description =models.CharField(max_length=100,null=True)
-    image = models.ImageField(upload_to="images/",null=True, height_field=None, width_field=None, max_length=100,  )
+    description = models.CharField(max_length=100, null=True)
+    image = models.ImageField(upload_to="images/")
 
     def __str__(self):
         return self.name
 
 
-
-class Service (models.Model):
+class Service(models.Model):
     name = models.CharField(max_length=20)
-    description =models.CharField(max_length=100,null=True)
-    category = models.ForeignKey(Category, models.DO_NOTHING,  blank=True, null=True,)
-    image = models.ImageField(upload_to="images/",null=True, height_field=None, width_field=None, max_length=100, )
-
-    def __str__(self):
-        return self.name
- 
-
-class User(AbstractUser):
-    # Your custom fields and methods here
-    phone=models.CharField(max_length=20)
-    groups = ManyToManyField(Group, related_name="service_users")
-    
-    class Meta:
-        db_table = 'custom_user'  # Use a unique db_table name for your custom User model
-
-    # Override the groups field to specify a unique related_name attribute
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='custom_user_groups',
+    description = models.CharField(max_length=100, null=True)
+    image = models.ImageField(upload_to="images/")
+    category = models.ForeignKey(
+        Category,
+        models.DO_NOTHING,
         blank=True,
+        null=True,
     )
 
-    # Override the user_permissions field to specify a unique related_name attribute
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='custom_user_permissions',
-        blank=True,
-     )
+    def __str__(self):
+        return self.name
 
-    
+
+class RequestedServices(models.Model):
+    service = models.ForeignKey(Service, models.CASCADE, blank=False, null=False)
+    status = models.CharField(max_length=100, null=True, default="معلق")
+    description = models.CharField(max_length=100, null=False)
+    location = models.CharField(max_length=100, null=False)
+    building_name = models.CharField(max_length=100, null=False)
+    building_number = models.DecimalField(max_digits=10, decimal_places=0, null=False)
+    asset_number = models.DecimalField(max_digits=10, decimal_places=0, null=False)
+    user = models.ForeignKey(User, models.CASCADE, blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.user.username + " " + self.service.name
+
+
+class Comment(models.Model):
+    comment = models.CharField(max_length=300)
+    requestedServices = models.ForeignKey(
+        RequestedServices, models.CASCADE, blank=False, null=False
+    )
+    user = models.ForeignKey(User, models.CASCADE, blank=False, null=False)
+
+    def __str__(self):
+        return self.comment
