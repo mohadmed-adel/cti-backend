@@ -62,6 +62,7 @@ class RequestedServicesSerializer(serializers.ModelSerializer):
             "asset_number",
             "created_at",
             "user",
+            "attachment",
         ]  # Include 'user' field
     
     def create(self, validated_data):
@@ -77,3 +78,7 @@ class RequestedServicesSerializer(serializers.ModelSerializer):
         validated_data["service"] = service
 
         return super().create(validated_data)
+class RequestedServicesImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RequestedServices
+        fields = ('id', 'attachment')

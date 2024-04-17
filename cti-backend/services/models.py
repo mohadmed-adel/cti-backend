@@ -11,7 +11,7 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class Category(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=100)
     description = models.CharField(max_length=100, null=True)
     image = models.ImageField(upload_to="images/")
 
@@ -20,7 +20,7 @@ class Category(models.Model):
 
 
 class Service(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=100)
     description = models.CharField(max_length=100, null=True)
     image = models.ImageField(upload_to="images/")
     category = models.ForeignKey(
@@ -43,8 +43,10 @@ class RequestedServices(models.Model):
     building_number = models.DecimalField(max_digits=10, decimal_places=0, null=False)
     asset_number = models.DecimalField(max_digits=10, decimal_places=0, null=False)
     user = models.ForeignKey(User, models.CASCADE, blank=False, null=False)
+    attachment=  models.ImageField(upload_to="images/",null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
 
     def __str__(self):
         return self.user.username + " " + self.service.name
