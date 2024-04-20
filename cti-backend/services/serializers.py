@@ -63,21 +63,15 @@ class RequestedServicesSerializer(serializers.ModelSerializer):
             "created_at",
             "user",
             "attachment",
-        ]  # Include 'user' field
+        ]  
     
     def create(self, validated_data):
-        print("validated_data ", validated_data)
-        # Retrieve the service_id from validated_data
         service_id = validated_data.pop("service_id")
-
-        # Add user to the validated data before creating the instance
         validated_data["user"] = self.context["request"].user
-
-        # Retrieve the Service object using the service_id
         service = Service.objects.get(pk=service_id)
         validated_data["service"] = service
-
         return super().create(validated_data)
+    
 class RequestedServicesImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequestedServices
