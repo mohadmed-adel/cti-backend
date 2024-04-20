@@ -2,7 +2,6 @@ from rest_framework import serializers
 from .models import Category, Service, RequestedServices,Comment
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
-from django.urls import reverse
 
 
 def get_full_image_url(request, image_url):
