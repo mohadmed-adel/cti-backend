@@ -13,8 +13,9 @@ class RequestedServicesAdmin(admin.ModelAdmin):
             return queryset  # Return the original queryset without any filtering
         
         # Check if the user belongs to IT Group
-        it_group = Group.objects.get(name='IT Group')
-        non_it_group = Group.objects.get(name='non-IT Group')
+        it_group = Group.objects.get(id=1)
+        non_it_group = Group.objects.get(id=2)
+        electricity_group = Group.objects.get(id=3)
         if it_group in request.user.groups.all():
             # Filter queryset based on MainCategory for IT Group
             main_category = 2
@@ -24,6 +25,12 @@ class RequestedServicesAdmin(admin.ModelAdmin):
         elif non_it_group in request.user.groups.all():
             # Filter queryset based on MainCategory for non-IT Group
             main_category = 1
+            if main_category:
+                # Filter RequestedServices based on related MainCategory
+                queryset = queryset.filter(service__category__main_category=main_category)
+        elif electricity_group in request.user.groups.all():
+            # Filter queryset based on MainCategory for non-IT Group
+            main_category = 3
             if main_category:
                 # Filter RequestedServices based on related MainCategory
                 queryset = queryset.filter(service__category__main_category=main_category)
