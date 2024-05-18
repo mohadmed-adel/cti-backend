@@ -37,7 +37,7 @@ class RequestedServicesAdmin(admin.ModelAdmin):
 
         return queryset
         
-
+  
 admin.site.register(Maincategory)
 admin.site.register(Category)
 admin.site.register(Service)

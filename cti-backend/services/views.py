@@ -61,7 +61,7 @@ class LoginView(APIView):
             )
         else:
             # If authentication fails, return an error response
-            return JsonResponse({"error": "Invalid credentials", "code": 400})
+            return JsonResponse({"error": "كلمة المرور او المستخدم غير صحيح", "code": 400})
 
 
 class UserRetrieveView(APIView):
