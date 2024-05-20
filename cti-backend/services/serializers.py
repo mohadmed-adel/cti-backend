@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Service, RequestedServices,Comment
+from .models import Category, Service, RequestedServices, Comment,Status
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 
@@ -20,15 +20,18 @@ class ServiceSerializer(serializers.ModelSerializer):
         model = Service
         fields = "__all__"
 
+
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Comment
+        model = Comment
         fields = [
             "id",
             "comment",
             "requestedServices",
             "user",
         ]  # Include 'user' field
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -51,8 +54,7 @@ class RequestedServicesSerializer(serializers.ModelSerializer):
         model = RequestedServices
         fields = [
             "id",
-            "status",
-            "service",
+             "service",
             "service_id",
             "description",
             "location",
@@ -62,16 +64,31 @@ class RequestedServicesSerializer(serializers.ModelSerializer):
             "created_at",
             "user",
             "attachment",
-        ]  
-    
+        ]
+        
+
     def create(self, validated_data):
         service_id = validated_data.pop("service_id")
         validated_data["user"] = self.context["request"].user
         service = Service.objects.get(pk=service_id)
         validated_data["service"] = service
+        validated_data["status"] = Status.objects.get(pk=1)
         return super().create(validated_data)
-    
+
+
 class RequestedServicesImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequestedServices
-        fields = ('id', 'attachment')
+        fields = ("id", "attachment")
+
+class StatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Status
+        fields = '__all__'
+class RequestedServicesListingSerializer(serializers.ModelSerializer):
+    status = StatusSerializer()
+    service= ServiceSerializer()
+    class Meta:
+        model = RequestedServices
+        fields = "__all__"
+        

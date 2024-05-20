@@ -6,6 +6,7 @@ from rest_framework import generics, permissions
 from .models import Category, Service, RequestedServices, Comment
 from .serializers import (
     MainServiceSerializer,
+    RequestedServicesListingSerializer,
     ServiceSerializer,
     UserSerializer,
     RequestedServicesSerializer,
@@ -81,7 +82,7 @@ class RequestedServicesListView(APIView):
     def get(self, request):
         user = request.user
         requested_services = RequestedServices.objects.filter(user=user)
-        serializer = RequestedServicesSerializer(
+        serializer = RequestedServicesListingSerializer(
             requested_services, many=True, context={"request": request}
         )
         return Response(serializer.data)
@@ -96,6 +97,7 @@ class RequestedServicesListView(APIView):
         if serializer.is_valid():
             serializer.save(
                 user=request.user
+                
             )  # Pass the user directly to the serializer
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
