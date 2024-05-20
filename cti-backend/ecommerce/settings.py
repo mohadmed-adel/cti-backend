@@ -21,6 +21,7 @@ ALLOWED_HOSTS = [
     "192.168.1.4",
     "192.168.1.7",
     "192.168.1.5",
+    "192.168.1.8",
     "192.168.7.109"
 ]
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
