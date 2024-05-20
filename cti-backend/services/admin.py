@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category,Service,RequestedServices,Comment,Maincategory
+from .models import Category,Service,RequestedServices,Comment,Maincategory,Status
 from django.contrib.auth.models import Group
 
 
@@ -43,3 +43,4 @@ admin.site.register(Category)
 admin.site.register(Service)
 admin.site.register(RequestedServices,RequestedServicesAdmin)
 admin.site.register(Comment)
+admin.site.register(Status)

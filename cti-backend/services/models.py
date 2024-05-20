@@ -21,11 +21,16 @@ class Service(models.Model):
     category = models.ForeignKey( Category, models.CASCADE, blank=True, null=True,)
     def __str__(self):
         return self.name
-
+    
+    
+class Status(models.Model):
+    name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
 
 class RequestedServices(models.Model):
     service = models.ForeignKey(Service, models.CASCADE, blank=False, null=False)
-    status = models.CharField(max_length=100, null=True, default="معلق")
+    status = models.ForeignKey(Status, models.DO_NOTHING, blank=False, null=False)
     description = models.CharField(max_length=100, null=False)
     location = models.CharField(max_length=100, null=False)
     building_name = models.CharField(max_length=100, null=False)
@@ -45,3 +50,5 @@ class Comment(models.Model):
     user = models.ForeignKey(User, models.CASCADE, blank=False, null=False)
     def __str__(self):
         return self.comment
+
+
