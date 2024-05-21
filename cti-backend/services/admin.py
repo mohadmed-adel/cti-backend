@@ -6,48 +6,78 @@ from django.contrib.auth.models import Group
 # which acts a bit like a singleton
 class CommentInline(admin.TabularInline):
     model = Comment
-    extra = 1  # how many rows to show by default
+    extra = 0
+     
 
- 
 class RequestedServicesAdmin(admin.ModelAdmin):
     inlines = [CommentInline]
-    def get_queryset(self, request):
-        # Get the original queryset
-        queryset = super().get_queryset(request)
-        
-        # Check if the user is an admin
-        if request.user.is_superuser or request.user.groups.filter(name='admin').exists():
-            return queryset  # Return the original queryset without any filtering
-        
-        # Check if the user belongs to IT Group
-        it_group = Group.objects.get(id=1)
-        non_it_group = Group.objects.get(id=2)
-        electricity_group = Group.objects.get(id=3)
-        if it_group in request.user.groups.all():
-            # Filter queryset based on MainCategory for IT Group
-            main_category = 2
-            if main_category:
-                # Filter RequestedServices based on related MainCategory
-                queryset = queryset.filter(service__category__main_category=main_category)
-        elif non_it_group in request.user.groups.all():
-            # Filter queryset based on MainCategory for non-IT Group
-            main_category = 1
-            if main_category:
-                # Filter RequestedServices based on related MainCategory
-                queryset = queryset.filter(service__category__main_category=main_category)
-        elif electricity_group in request.user.groups.all():
-            # Filter queryset based on MainCategory for non-IT Group
-            main_category = 3
-            if main_category:
-                # Filter RequestedServices based on related MainCategory
-                queryset = queryset.filter(service__category__main_category=main_category)
 
-        return queryset
-        
-  
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+
+        # If user is superuser or in admin group, return unfiltered queryset
+        if request.user.is_superuser or request.user.groups.filter(name='admin').exists():
+            return queryset
+
+        # Define group-category mapping
+        group_main_category_map = {
+            'IT Group': 2,
+            'non-IT Group': 1,
+            'Electricity Group': 3
+        }
+
+        # Filter queryset based on user's group membership
+        for group_name, main_category in group_main_category_map.items():
+            try:
+                group = Group.objects.get(name=group_name)
+                if group in request.user.groups.all():
+                    return queryset.filter(service__category__main_category=main_category)
+            except Group.DoesNotExist:
+                pass
+
+        # If user doesn't belong to any mapped group, return an empty queryset
+        return queryset.none()
+
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('comment', 'requestedServices', 'user')
+    search_fields = ('comment', 'requestedServices__id', 'user__username')
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        user = request.user
+
+        # If user is superuser or in admin group, return unfiltered queryset
+        if user.is_superuser or user.groups.filter(name='admin').exists():
+            return queryset
+
+        # Define group-category mapping
+        group_main_category_map = {
+            'IT Group': 2,
+            'non-IT Group': 1,
+            'Electricity Group': 3
+        }
+
+        # Collect requestedServices accessible by the user
+        accessible_requested_services_ids = []
+
+        for group_name, main_category in group_main_category_map.items():
+            try:
+                group = Group.objects.get(name=group_name)
+                if group in user.groups.all():
+                    accessible_requested_services = RequestedServices.objects.filter(service__category__main_category=main_category)
+                    accessible_requested_services_ids.extend(accessible_requested_services.values_list('id', flat=True))
+            except Group.DoesNotExist:
+                pass
+
+        # Filter comments based on accessible requestedServices
+        return queryset.filter(requestedServices__id__in=accessible_requested_services_ids)
+
+
+ 
+
 admin.site.register(Maincategory)
 admin.site.register(Category)
 admin.site.register(Service)
 admin.site.register(RequestedServices,RequestedServicesAdmin)
-admin.site.register(Comment)
+admin.site.register(Comment,CommentAdmin)
 admin.site.register(Status)
