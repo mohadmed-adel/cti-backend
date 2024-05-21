@@ -2,8 +2,15 @@ from django.contrib import admin
 from .models import Category,Service,RequestedServices,Comment,Maincategory,Status
 from django.contrib.auth.models import Group
 
+# Define an inline admin descriptor for Comment model
+# which acts a bit like a singleton
+class CommentInline(admin.TabularInline):
+    model = Comment
+    extra = 1  # how many rows to show by default
 
+ 
 class RequestedServicesAdmin(admin.ModelAdmin):
+    inlines = [CommentInline]
     def get_queryset(self, request):
         # Get the original queryset
         queryset = super().get_queryset(request)
